@@ -26,6 +26,7 @@ class Sprite {
 
 		};
 		this.isAttacking;
+		this.lifeBlock = document.getElementById(this.parameters.lifeDivId).querySelector('.hp')
 	}
 
 	draw() {
@@ -105,7 +106,10 @@ const player = new Sprite({
 		attackHeight: 50,
 		userColor: 'green',
 		attackColor: 'red',
-		attackOffset: 0
+		attackOffset: 0,
+		hp: 100,
+		attackPower: 10,
+		lifeDivId:'player-life' 
 	},
 	keys: {
 		moveX: {
@@ -142,7 +146,11 @@ const enemy = new Sprite({
 		attackHeight: 50,
 		userColor: 'blue',
 		attackColor: 'red',
-		attackOffset: -50
+		attackOffset: -50,
+		hp: 100,
+		attackPower: 10,
+		lifeDivId:'enemy-life' 
+
 	},
 	keys: {
 		moveX: {
@@ -200,7 +208,13 @@ function animate() {
 		player.isAttacking
 	) {
 		player.isAttacking = false;
-		console.log('player yes');
+		if(enemy.parameters.hp > 0){
+			enemy.parameters.hp = enemy.parameters.hp - player.parameters.attackPower;
+		}
+		else{
+			enemy.parameters.hp = 0
+		}
+		enemy.lifeBlock.style.width = enemy.parameters.hp + '%';
 	}
 	if (
 		rectangularCollision(
@@ -212,7 +226,15 @@ function animate() {
 		enemy.isAttacking
 	) {
 		enemy.isAttacking = false;
-		console.log('enemy yes');
+		if(player.parameters.hp > 0){
+			player.parameters.hp = player.parameters.hp - enemy.parameters.attackPower;
+		}
+		else{
+			player.parameters.hp = 0
+		}
+		player.lifeBlock.style.width =  player.parameters.hp + '%';
+
+
 	}
 }
 

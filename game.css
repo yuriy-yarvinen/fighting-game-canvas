@@ -1,0 +1,41 @@
+html{
+	box-sizing: border-box;
+}
+
+.game-body{
+	display: inline-block;
+	position: relative;
+}
+.game-body__header{
+	display: flex;
+	justify-content: space-between;
+	height: 80px;
+	background: transparent;
+	width: 100%;
+	position: absolute;
+}
+
+.game-body__header__left,.game-body__header__right{
+		border: 1px solid #ffffff;
+		height: 70px;
+		width: 45%;
+		background-color: red;
+		position: relative;
+}
+.game-body__header__left .hp,.game-body__header__right .hp{
+		content: '';
+		background-color: blue;
+		width: 100%;
+		position: absolute;
+		height: inherit;
+		right: 0;
+		
+}
+
+.game-body__header__left{
+		
+}
+
+.game-body__header__center{
+	width: 10%;
+}

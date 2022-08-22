@@ -4,10 +4,29 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="game.css">
 	<title>Fighting game</title>
 </head>
 <body>
-	<canvas id="game"></canvas>
+	<div class="game-body">
+		<div class="game-body__header">
+			<div 
+			id="player-life" class="game-body__header__left">
+			<div class="hp"></div>
+			</div>
+			<div class="game-body__header__center">
+
+			</div>
+			<div 
+			id="enemy-life"
+			class="game-body__header__right">
+			<div class="hp"></div>
+
+			</div>
+		</div>
+		<canvas id="game"></canvas>
+	</div>
 	<script src="index.js"></script>
+	
 </body>
 </html>
