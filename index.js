@@ -1,7 +1,6 @@
 const canvas = document.getElementById('game');
 const context = canvas.getContext('2d');
-const gravity = 0.2;
-const userColor = 'red';
+const gravity = 0.7;
 const backgroundColor = 'black';
 
 canvas.width = 1024;
@@ -16,21 +15,45 @@ class Sprite {
 		this.parameters = parameters;
 		this.lastKey = lastKey;
 		this.keys = keys;
+		this.attackBox = {
+			position: {
+				x: this.position.x,
+				y: this.position.y
+			},
+			width: this.parameters.attackWidth,
+			height: this.parameters.attackHeight,
+			offset: this.parameters.attackOffset,
+
+		};
+		this.isAttacking;
 	}
 
 	draw() {
-		context.fillStyle = userColor;
+		context.fillStyle = this.parameters.userColor;
 		context.fillRect(
 			this.position.x,
 			this.position.y,
 			this.parameters.width,
 			this.parameters.height
 		)
+
+		if (this.isAttacking) {
+			context.fillStyle = this.parameters.attackColor;
+
+			context.fillRect(
+				this.attackBox.position.x,
+				this.attackBox.position.y,
+				this.attackBox.width,
+				this.attackBox.height
+			)
+		}
 	}
 
 	update() {
 		this.draw();
 		this.position.x += this.velocity.x;
+		this.attackBox.position.x = this.position.x + this.attackBox.offset;
+		this.attackBox.position.y = this.position.y;
 
 		if (this.position.x + this.parameters.width + this.velocity.x >= canvas.width) {
 			this.position.x = canvas.width - this.parameters.width;
@@ -48,14 +71,26 @@ class Sprite {
 		else {
 			this.velocity.y += gravity;
 		}
-
-
 	}
+
+	attack() {
+		this.isAttacking = true;
+		setTimeout(() => {
+			this.isAttacking = false;
+		}, 100);
+	}
+}
+
+function rectangularCollision(rectangle1, rectangle2) {
+	return (rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x &&
+		rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.parameters.width &&
+		rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y &&
+		rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.parameters.height);
 }
 
 const player = new Sprite({
 	position: {
-		x: 400,
+		x: 0,
 		y: 200,
 	},
 	velocity: {
@@ -65,9 +100,14 @@ const player = new Sprite({
 	parameters: {
 		width: 50,
 		height: 150,
-		jumpHeight: 200
+		jumpHeight: -20,
+		attackWidth: 100,
+		attackHeight: 50,
+		userColor: 'green',
+		attackColor: 'red',
+		attackOffset: 0
 	},
-	keys:{
+	keys: {
 		moveX: {
 			a: {
 				pressed: false
@@ -80,13 +120,14 @@ const player = new Sprite({
 			w: {
 				pressed: false
 			}
-		}
+		},
+		attack: [' ']
 	}
 })
 
 const enemy = new Sprite({
 	position: {
-		x: 0,
+		x: 400,
 		y: 200,
 	},
 	velocity: {
@@ -96,11 +137,15 @@ const enemy = new Sprite({
 	parameters: {
 		width: 50,
 		height: 150,
-		jumpHeight: 200
+		jumpHeight: -20,
+		attackWidth: 100,
+		attackHeight: 50,
+		userColor: 'blue',
+		attackColor: 'red',
+		attackOffset: -50
 	},
-	keys:{
+	keys: {
 		moveX: {
-
 			ArrowLeft: {
 				pressed: false
 			},
@@ -112,7 +157,8 @@ const enemy = new Sprite({
 			ArrowUp: {
 				pressed: false
 			},
-		}
+		},
+		attack: ['ArrowDown']
 	}
 })
 
@@ -144,6 +190,22 @@ function animate() {
 	else if (enemy.keys.moveX.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
 		enemy.velocity.x = 2;
 	}
+
+	/// attack detect
+	if (
+		rectangularCollision(player, enemy) &&
+		player.isAttacking
+	) {
+		player.isAttacking = false;
+		console.log('player yes');
+	}
+	if (
+		rectangularCollision(player, enemy) &&
+		enemy.isAttacking
+	) {
+		enemy.isAttacking = false;
+		console.log('enemy yes');
+	}
 }
 
 // key binding
@@ -156,15 +218,24 @@ window.addEventListener('keydown', function (event) {
 		enemy.keys.moveX[event.key].pressed = true;
 		enemy.lastKey = event.key;
 	}
+	if (player.keys.attack.includes(event.key)) {
+		player.attack();
+	}
+	if (enemy.keys.attack.includes(event.key)) {
+		enemy.attack()
+	}
 
 	if (event.key == 'w') {
 		if (player.position.y + player.parameters.height >= canvas.height) {
-			player.position.y = player.parameters.jumpHeight;
+			player.velocity.y = player.parameters.jumpHeight;
+
 		}
 	}
 	if (event.key == 'ArrowUp') {
+
 		if (enemy.position.y + enemy.parameters.height >= canvas.height) {
-			enemy.position.y = enemy.parameters.jumpHeight;
+			enemy.velocity.y = enemy.parameters.jumpHeight;
+
 		}
 	}
 });
