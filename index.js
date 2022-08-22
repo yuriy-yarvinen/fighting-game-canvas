@@ -81,7 +81,7 @@ class Sprite {
 	}
 }
 
-function rectangularCollision(rectangle1, rectangle2) {
+function rectangularCollision({ rectangle1, rectangle2 }) {
 	return (rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x &&
 		rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.parameters.width &&
 		rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y &&
@@ -193,14 +193,22 @@ function animate() {
 
 	/// attack detect
 	if (
-		rectangularCollision(player, enemy) &&
+		rectangularCollision({
+			rectangle1: player,
+			rectangle2: enemy
+		}) &&
 		player.isAttacking
 	) {
 		player.isAttacking = false;
 		console.log('player yes');
 	}
 	if (
-		rectangularCollision(player, enemy) &&
+		rectangularCollision(
+			{
+				rectangle1: enemy,
+				rectangle2: player
+			}
+		) &&
 		enemy.isAttacking
 	) {
 		enemy.isAttacking = false;
