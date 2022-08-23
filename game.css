@@ -14,7 +14,18 @@ html{
 	width: 100%;
 	position: absolute;
 }
-
+#notification{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	font-size: 25px;
+	color: #ffffff;
+}
 .game-body__header__left,.game-body__header__right{
 		border: 1px solid #ffffff;
 		height: 70px;
@@ -38,4 +49,9 @@ html{
 
 .game-body__header__center{
 	width: 10%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 25px;
+	color: #ffffff;
 }

@@ -2,11 +2,38 @@ const canvas = document.getElementById('game');
 const context = canvas.getContext('2d');
 const gravity = 0.7;
 const backgroundColor = 'black';
-
+const timerBlock = document.getElementById('timer');
+const notificationBlock = document.getElementById('notification');
+let timerTime = 10;
+let gameStarted = false;
 canvas.width = 1024;
 canvas.height = 576;
 
 context.fillRect(0, 0, canvas.width, canvas.height);
+
+
+function startGame() {
+	gameStarted = true;
+}
+
+function stopGame() {
+	let notification;
+	if(timerTime <= 0){
+		notification = 'Game over';
+	} 
+	if(player.parameters.hp === enemy.parameters.hp){
+		notification = 'Tie';
+	}
+	if(player.parameters.hp > enemy.parameters.hp){
+		notification = 'Player win';
+	}
+	if(player.parameters.hp < enemy.parameters.hp){
+		notification = 'Enemy win';
+	}
+
+	clearInterval(gameInterval);
+	notificationBlock.innerHTML = notification;
+}
 
 class Sprite {
 	constructor({ position, velocity, parameters, keys, lastKey }) {
@@ -109,7 +136,7 @@ const player = new Sprite({
 		attackOffset: 0,
 		hp: 100,
 		attackPower: 10,
-		lifeDivId:'player-life' 
+		lifeDivId: 'player-life'
 	},
 	keys: {
 		moveX: {
@@ -149,7 +176,7 @@ const enemy = new Sprite({
 		attackOffset: -50,
 		hp: 100,
 		attackPower: 10,
-		lifeDivId:'enemy-life' 
+		lifeDivId: 'enemy-life'
 
 	},
 	keys: {
@@ -208,14 +235,16 @@ function animate() {
 		player.isAttacking
 	) {
 		player.isAttacking = false;
-		if(enemy.parameters.hp > 0){
+		if (enemy.parameters.hp > 0) {
 			enemy.parameters.hp = enemy.parameters.hp - player.parameters.attackPower;
 		}
-		else{
+		else {
 			enemy.parameters.hp = 0
 		}
+
 		enemy.lifeBlock.style.width = enemy.parameters.hp + '%';
 	}
+
 	if (
 		rectangularCollision(
 			{
@@ -226,15 +255,19 @@ function animate() {
 		enemy.isAttacking
 	) {
 		enemy.isAttacking = false;
-		if(player.parameters.hp > 0){
+		if (player.parameters.hp > 0) {
 			player.parameters.hp = player.parameters.hp - enemy.parameters.attackPower;
 		}
-		else{
+		else {
 			player.parameters.hp = 0
 		}
-		player.lifeBlock.style.width =  player.parameters.hp + '%';
 
+		player.lifeBlock.style.width = player.parameters.hp + '%';
 
+	}
+
+	if (enemy.parameters.hp <= 0 || player.parameters.hp <= 0) {
+		stopGame()
 	}
 }
 
@@ -281,3 +314,17 @@ window.addEventListener('keyup', function (event) {
 });
 
 animate();
+startGame();
+
+var gameInterval = setInterval(() => {
+	if(gameStarted){
+		timerTime--;
+
+		if (timerTime <= 0) {
+			timerTime = 0;
+			stopGame()
+		}
+		timerBlock.innerHTML = timerTime;
+	}
+
+}, 1000);
