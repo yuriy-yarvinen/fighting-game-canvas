@@ -1,122 +1,24 @@
-const canvas = document.getElementById('game');
-const context = canvas.getContext('2d');
-const gravity = 0.7;
-const backgroundColor = 'black';
-const timerBlock = document.getElementById('timer');
-const notificationBlock = document.getElementById('notification');
-let timerTime = 10;
-let gameStarted = false;
-canvas.width = 1024;
-canvas.height = 576;
 
 context.fillRect(0, 0, canvas.width, canvas.height);
 
+const background = new Sprite({
+	position: {
+		x: 0,
+		y: 0
+	},
+	imageSrc: './images/background.png'
+})
+const shopImage = new Sprite({
+	position: {
+		x: 600,
+		y: 128
+	},
+	scale: 2.75,
+	framesMax: 6,
+	imageSrc: './images/shop.png'
+})
 
-function startGame() {
-	gameStarted = true;
-}
-
-function stopGame() {
-	let notification;
-	if(timerTime <= 0){
-		notification = 'Game over';
-	} 
-	if(player.parameters.hp === enemy.parameters.hp){
-		notification = 'Tie';
-	}
-	if(player.parameters.hp > enemy.parameters.hp){
-		notification = 'Player win';
-	}
-	if(player.parameters.hp < enemy.parameters.hp){
-		notification = 'Enemy win';
-	}
-
-	clearInterval(gameInterval);
-	notificationBlock.innerHTML = notification;
-}
-
-class Sprite {
-	constructor({ position, velocity, parameters, keys, lastKey }) {
-		this.position = position;
-		this.velocity = velocity;
-		this.parameters = parameters;
-		this.lastKey = lastKey;
-		this.keys = keys;
-		this.attackBox = {
-			position: {
-				x: this.position.x,
-				y: this.position.y
-			},
-			width: this.parameters.attackWidth,
-			height: this.parameters.attackHeight,
-			offset: this.parameters.attackOffset,
-
-		};
-		this.isAttacking;
-		this.lifeBlock = document.getElementById(this.parameters.lifeDivId).querySelector('.hp')
-	}
-
-	draw() {
-		context.fillStyle = this.parameters.userColor;
-		context.fillRect(
-			this.position.x,
-			this.position.y,
-			this.parameters.width,
-			this.parameters.height
-		)
-
-		if (this.isAttacking) {
-			context.fillStyle = this.parameters.attackColor;
-
-			context.fillRect(
-				this.attackBox.position.x,
-				this.attackBox.position.y,
-				this.attackBox.width,
-				this.attackBox.height
-			)
-		}
-	}
-
-	update() {
-		this.draw();
-		this.position.x += this.velocity.x;
-		this.attackBox.position.x = this.position.x + this.attackBox.offset;
-		this.attackBox.position.y = this.position.y;
-
-		if (this.position.x + this.parameters.width + this.velocity.x >= canvas.width) {
-			this.position.x = canvas.width - this.parameters.width;
-		}
-		if (this.position.x <= 0) {
-			this.position.x = 0;
-		}
-
-
-		this.position.y += this.velocity.y;
-
-		if (this.position.y + this.parameters.height + this.velocity.y >= canvas.height) {
-			this.velocity.y = 0;
-		}
-		else {
-			this.velocity.y += gravity;
-		}
-	}
-
-	attack() {
-		this.isAttacking = true;
-		setTimeout(() => {
-			this.isAttacking = false;
-		}, 100);
-	}
-}
-
-function rectangularCollision({ rectangle1, rectangle2 }) {
-	return (rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x &&
-		rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.parameters.width &&
-		rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y &&
-		rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.parameters.height);
-}
-
-const player = new Sprite({
+const player = new Fighters({
 	position: {
 		x: 0,
 		y: 200,
@@ -126,6 +28,7 @@ const player = new Sprite({
 		y: 10,
 	},
 	parameters: {
+		speed: 4,
 		width: 50,
 		height: 150,
 		jumpHeight: -20,
@@ -136,6 +39,7 @@ const player = new Sprite({
 		attackOffset: 0,
 		hp: 100,
 		attackPower: 10,
+		stopFall: 97,
 		lifeDivId: 'player-life'
 	},
 	keys: {
@@ -153,12 +57,38 @@ const player = new Sprite({
 			}
 		},
 		attack: [' ']
+	},
+	scale: 2.75,
+	offset: {
+		x: 215,
+		y: 180
+	},
+	framesMax: 8,
+	imageSrc: './images/samuraiMack/Idle.png',
+	sprites: {
+		idle: {
+			framesMax: 8,
+			imageSrc: './images/samuraiMack/Idle.png'
+		},
+		run: {
+			framesMax: 8,
+			imageSrc: './images/samuraiMack/Run.png'
+		},
+		jump: {
+			framesMax: 2,
+			imageSrc: './images/samuraiMack/Jump.png'
+		},
+		fall: {
+			framesMax: 2,
+			imageSrc: './images/samuraiMack/Fall.png'
+		},
+
 	}
 })
 
-const enemy = new Sprite({
+const enemy = new Fighters({
 	position: {
-		x: 400,
+		x: canvas.width - 50,
 		y: 200,
 	},
 	velocity: {
@@ -166,6 +96,7 @@ const enemy = new Sprite({
 		y: 10,
 	},
 	parameters: {
+		speed: 4,
 		width: 50,
 		height: 150,
 		jumpHeight: -20,
@@ -176,6 +107,7 @@ const enemy = new Sprite({
 		attackOffset: -50,
 		hp: 100,
 		attackPower: 10,
+		stopFall: 97,
 		lifeDivId: 'enemy-life'
 
 	},
@@ -194,6 +126,32 @@ const enemy = new Sprite({
 			},
 		},
 		attack: ['ArrowDown']
+	},
+	scale: 2.75,
+	offset: {
+		x: 215,
+		y: 180
+	},
+	framesMax: 8,
+	imageSrc: './images/samuraiMack/Idle.png',
+	sprites: {
+		idle: {
+			framesMax: 8,
+			imageSrc: './images/samuraiMack/Idle.png'
+		},
+		run: {
+			framesMax: 8,
+			imageSrc: './images/samuraiMack/Run.png'
+		},
+		jump: {
+			framesMax: 2,
+			imageSrc: './images/samuraiMack/Jump.png'
+		},
+		fall: {
+			framesMax: 2,
+			imageSrc: './images/samuraiMack/Fall.png'
+		},
+
 	}
 })
 
@@ -206,6 +164,8 @@ function animate() {
 		canvas.width,
 		canvas.height
 	);
+	background.update();
+	shopImage.update();
 	player.update();
 	enemy.update();
 
@@ -213,19 +173,51 @@ function animate() {
 	enemy.velocity.x = 0;
 
 	if (player.keys.moveX.a.pressed && player.lastKey === 'a') {
-		player.velocity.x = -2;
+		player.velocity.x = -player.parameters.speed;
+		player.switchSprites('run');
+
 	}
 	else if (player.keys.moveX.d.pressed && player.lastKey === 'd') {
-		player.velocity.x = 2;
+		player.velocity.x = player.parameters.speed;
+		player.switchSprites('run');
+
+	}
+	else{
+		player.switchSprites('idle');
+		
+	}
+	if(player.velocity.y < 0){
+		player.switchSprites('jump');
+		
+	}
+	else if(player.velocity.y > 0){
+		player.switchSprites('fall');
+
 	}
 
 	if (enemy.keys.moveX.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
-		enemy.velocity.x = -2;
+		enemy.velocity.x = -enemy.parameters.speed;
+		enemy.switchSprites('run');
+
 	}
 	else if (enemy.keys.moveX.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
-		enemy.velocity.x = 2;
+		enemy.velocity.x = enemy.parameters.speed;
+		enemy.switchSprites('run');
+
+	}
+	else{
+		enemy.switchSprites('idle');
+
 	}
 
+	if(enemy.velocity.y < 0){
+		enemy.switchSprites('jump');
+		
+	}
+	else if(enemy.velocity.y > 0){
+		enemy.switchSprites('fall');
+
+	}
 	/// attack detect
 	if (
 		rectangularCollision({
@@ -277,29 +269,30 @@ window.addEventListener('keydown', function (event) {
 		player.keys.moveX[event.key].pressed = true;
 		player.lastKey = event.key;
 	}
-	if (Object.keys(enemy.keys.moveX).includes(event.key)) {
-		enemy.keys.moveX[event.key].pressed = true;
-		enemy.lastKey = event.key;
-	}
-	if (player.keys.attack.includes(event.key)) {
-		player.attack();
-	}
-	if (enemy.keys.attack.includes(event.key)) {
-		enemy.attack()
-	}
 
 	if (event.key == 'w') {
-		if (player.position.y + player.parameters.height >= canvas.height) {
+		if (player.position.y + player.parameters.height >= canvas.height - player.parameters.stopFall) {
 			player.velocity.y = player.parameters.jumpHeight;
 
 		}
 	}
+
+	if (player.keys.attack.includes(event.key)) {
+		player.attack();
+	}
+
+	if (Object.keys(enemy.keys.moveX).includes(event.key)) {
+		enemy.keys.moveX[event.key].pressed = true;
+		enemy.lastKey = event.key;
+	}
 	if (event.key == 'ArrowUp') {
-
-		if (enemy.position.y + enemy.parameters.height >= canvas.height) {
+		if (enemy.position.y + enemy.parameters.height >= canvas.height - enemy.parameters.stopFall) {
 			enemy.velocity.y = enemy.parameters.jumpHeight;
-
 		}
+	}
+
+	if (enemy.keys.attack.includes(event.key)) {
+		enemy.attack()
 	}
 });
 
@@ -307,9 +300,11 @@ window.addEventListener('keydown', function (event) {
 window.addEventListener('keyup', function (event) {
 	if (Object.keys(player.keys.moveX).includes(event.key)) {
 		player.keys.moveX[event.key].pressed = false;
+
 	}
 	if (Object.keys(enemy.keys.moveX).includes(event.key)) {
 		enemy.keys.moveX[event.key].pressed = false;
+
 	}
 });
 
@@ -317,7 +312,7 @@ animate();
 startGame();
 
 var gameInterval = setInterval(() => {
-	if(gameStarted){
+	if (gameStarted) {
 		timerTime--;
 
 		if (timerTime <= 0) {
@@ -328,3 +323,4 @@ var gameInterval = setInterval(() => {
 	}
 
 }, 1000);
+console.log(player);
