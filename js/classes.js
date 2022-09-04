@@ -1,5 +1,5 @@
 class Sprite {
-	constructor({ position, scale = 1, imageSrc, framesMax = 1, framesCurrent = 0, offset = {x:0, y:0} }) {
+	constructor({ position, scale = 1, imageSrc, framesMax = 1, framesCurrent = 0, offset = { x: 0, y: 0 } }) {
 		this.position = position;
 		this.scale = scale;
 		this.image = new Image();
@@ -7,7 +7,7 @@ class Sprite {
 		this.framesMax = framesMax;
 		this.framesCurrent = framesCurrent;
 		this.framesElapced = 0;
-		this.framesHold = 5;
+		this.framesHold = 3;
 		this.offset = offset;
 	}
 
@@ -66,7 +66,7 @@ class Fighters extends Sprite {
 			framesMax,
 			offset,
 		}),
-		
+
 		this.velocity = velocity;
 		this.parameters = parameters;
 		this.lastKey = lastKey;
@@ -90,20 +90,21 @@ class Fighters extends Sprite {
 		}
 	}
 
-	// draw() {
-	// 	if (this.isAttacking) {
-	// 		context.fillStyle = this.parameters.attackColor;
-
-	// 		context.fillRect(
-	// 			this.attackBox.position.x,
-	// 			this.attackBox.position.y,
-	// 			this.attackBox.width,
-	// 			this.attackBox.height
-	// 		)
-	// 	}
-	// }
-
 	switchSprites(spriteName) {
+
+		/// evrwridint all other animations with the attack animation
+		if (
+			this.image === this.sprites.attack1.image &&
+			this.framesCurrent < this.sprites.attack1.framesMax - 1
+		) {
+			return;
+		}
+		if (
+			this.image === this.sprites.takeHit.image &&
+			this.framesCurrent < this.sprites.takeHit.framesMax - 1
+		) {
+			return;
+		}
 		if (this.sprites[spriteName]) {
 			if (this.image != this.sprites[spriteName].image) {
 				this.image = this.sprites[spriteName].image;
@@ -117,8 +118,12 @@ class Fighters extends Sprite {
 		this.draw();
 		this.updateFrames();
 		this.position.x += this.velocity.x;
-		this.attackBox.position.x = this.position.x + this.attackBox.offset;
-		this.attackBox.position.y = this.position.y;
+		this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
+		this.attackBox.position.y = this.position.y + this.attackBox.offset.y;
+
+		// context.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height);
+
+		// context.fillRect(this.position.x, this.position.y, this.parameters.width, this.parameters.height);
 
 		if (this.position.x + this.parameters.width + this.velocity.x >= canvas.width) {
 			this.position.x = canvas.width - this.parameters.width;
@@ -139,10 +144,8 @@ class Fighters extends Sprite {
 		}
 	}
 
-	attack() {
+	attack1() {
+		this.switchSprites('attack1');
 		this.isAttacking = true;
-		setTimeout(() => {
-			this.isAttacking = false;
-		}, 100);
 	}
 }

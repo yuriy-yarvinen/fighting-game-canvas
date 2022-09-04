@@ -29,18 +29,57 @@ const player = new Fighters({
 	},
 	parameters: {
 		speed: 4,
-		width: 50,
+		width: 100,
 		height: 150,
 		jumpHeight: -20,
-		attackWidth: 100,
-		attackHeight: 50,
-		userColor: 'green',
-		attackColor: 'red',
-		attackOffset: 0,
+		attackWidth: 200,
+		attackHeight: 180,
+		attackFrame: 4,
+		attackOffset: {
+			x: 100,
+			y: -30
+		},
 		hp: 100,
 		attackPower: 10,
 		stopFall: 97,
 		lifeDivId: 'player-life'
+	},
+	scale: 2.75,
+	offset: {
+		x: 215,
+		y: 180
+	},
+	framesMax: 8,
+	imageSrc: './images/samuraiMack/Idle.png',
+	sprites: {
+		idle: {
+			framesMax: 8,
+			imageSrc: './images/samuraiMack/Idle.png'
+		},
+		run: {
+			framesMax: 8,
+			imageSrc: './images/samuraiMack/Run.png'
+		},
+		jump: {
+			framesMax: 2,
+			imageSrc: './images/samuraiMack/Jump.png'
+		},
+		fall: {
+			framesMax: 2,
+			imageSrc: './images/samuraiMack/Fall.png'
+		},
+		attack1: {
+			framesMax: 6,
+			imageSrc: './images/samuraiMack/Attack1.png'
+		},
+		attack2: {
+			framesMax: 6,
+			imageSrc: './images/samuraiMack/Attack2.png'
+		},
+		takeHit: {
+			framesMax: 4,
+			imageSrc: './images/samuraiMack/Take Hit - white silhouette.png'
+		},
 	},
 	keys: {
 		moveX: {
@@ -58,32 +97,6 @@ const player = new Fighters({
 		},
 		attack: [' ']
 	},
-	scale: 2.75,
-	offset: {
-		x: 215,
-		y: 180
-	},
-	framesMax: 8,
-	imageSrc: './images/samuraiMack/Idle.png',
-	sprites: {
-		idle: {
-			framesMax: 8,
-			imageSrc: './images/samuraiMack/Idle.png'
-		},
-		run: {
-			framesMax: 8,
-			imageSrc: './images/samuraiMack/Run.png'
-		},
-		jump: {
-			framesMax: 2,
-			imageSrc: './images/samuraiMack/Jump.png'
-		},
-		fall: {
-			framesMax: 2,
-			imageSrc: './images/samuraiMack/Fall.png'
-		},
-
-	}
 })
 
 const enemy = new Fighters({
@@ -97,19 +110,59 @@ const enemy = new Fighters({
 	},
 	parameters: {
 		speed: 4,
-		width: 50,
+		width: 100,
 		height: 150,
 		jumpHeight: -20,
-		attackWidth: 100,
-		attackHeight: 50,
-		userColor: 'blue',
-		attackColor: 'red',
-		attackOffset: -50,
+		attackWidth: 180,
+		attackHeight: 150,
+		attackFrame: 2,
+		attackOffset: {
+			x: -180,
+			y: -5
+		},
 		hp: 100,
 		attackPower: 10,
 		stopFall: 97,
 		lifeDivId: 'enemy-life'
 
+	},
+
+	scale: 2.75,
+	offset: {
+		x: 240,
+		y: 198
+	},
+	framesMax: 4,
+	imageSrc: './images/kenji/Idle.png',
+	sprites: {
+		idle: {
+			framesMax: 4,
+			imageSrc: './images/kenji/Idle.png'
+		},
+		run: {
+			framesMax: 8,
+			imageSrc: './images/kenji/Run.png'
+		},
+		jump: {
+			framesMax: 2,
+			imageSrc: './images/kenji/Jump.png'
+		},
+		fall: {
+			framesMax: 2,
+			imageSrc: './images/kenji/Fall.png'
+		},
+		attack1: {
+			framesMax: 4,
+			imageSrc: './images/kenji/Attack1.png'
+		},
+		attack2: {
+			framesMax: 4,
+			imageSrc: './images/kenji/Attack2.png'
+		},
+		takeHit: {
+			framesMax: 3,
+			imageSrc: './images/kenji/Take hit.png'
+		},
 	},
 	keys: {
 		moveX: {
@@ -127,32 +180,6 @@ const enemy = new Fighters({
 		},
 		attack: ['ArrowDown']
 	},
-	scale: 2.75,
-	offset: {
-		x: 215,
-		y: 180
-	},
-	framesMax: 8,
-	imageSrc: './images/samuraiMack/Idle.png',
-	sprites: {
-		idle: {
-			framesMax: 8,
-			imageSrc: './images/samuraiMack/Idle.png'
-		},
-		run: {
-			framesMax: 8,
-			imageSrc: './images/samuraiMack/Run.png'
-		},
-		jump: {
-			framesMax: 2,
-			imageSrc: './images/samuraiMack/Jump.png'
-		},
-		fall: {
-			framesMax: 2,
-			imageSrc: './images/samuraiMack/Fall.png'
-		},
-
-	}
 })
 
 function animate() {
@@ -182,15 +209,15 @@ function animate() {
 		player.switchSprites('run');
 
 	}
-	else{
+	else {
 		player.switchSprites('idle');
-		
+
 	}
-	if(player.velocity.y < 0){
+	if (player.velocity.y < 0) {
 		player.switchSprites('jump');
-		
+
 	}
-	else if(player.velocity.y > 0){
+	else if (player.velocity.y > 0) {
 		player.switchSprites('fall');
 
 	}
@@ -205,61 +232,55 @@ function animate() {
 		enemy.switchSprites('run');
 
 	}
-	else{
+	else {
 		enemy.switchSprites('idle');
 
 	}
 
-	if(enemy.velocity.y < 0){
+	if (enemy.velocity.y < 0) {
 		enemy.switchSprites('jump');
-		
+
 	}
-	else if(enemy.velocity.y > 0){
+	else if (enemy.velocity.y > 0) {
 		enemy.switchSprites('fall');
 
 	}
 	/// attack detect
-	if (
-		rectangularCollision({
-			rectangle1: player,
-			rectangle2: enemy
-		}) &&
-		player.isAttacking
-	) {
-		player.isAttacking = false;
-		if (enemy.parameters.hp > 0) {
-			enemy.parameters.hp = enemy.parameters.hp - player.parameters.attackPower;
-		}
-		else {
-			enemy.parameters.hp = 0
-		}
+	attackDetect(player, enemy)
+	attackDetect(enemy, player)
 
-		enemy.lifeBlock.style.width = enemy.parameters.hp + '%';
-	}
-
-	if (
-		rectangularCollision(
-			{
-				rectangle1: enemy,
-				rectangle2: player
-			}
-		) &&
-		enemy.isAttacking
-	) {
-		enemy.isAttacking = false;
-		if (player.parameters.hp > 0) {
-			player.parameters.hp = player.parameters.hp - enemy.parameters.attackPower;
-		}
-		else {
-			player.parameters.hp = 0
-		}
-
-		player.lifeBlock.style.width = player.parameters.hp + '%';
-
-	}
 
 	if (enemy.parameters.hp <= 0 || player.parameters.hp <= 0) {
 		stopGame()
+	}
+}
+
+function attackDetect(object1, object2) {
+	if (
+		rectangularCollision(
+			{
+				rectangle1: object1,
+				rectangle2: object2
+			}
+		) &&
+		object1.isAttacking &&
+		object1.framesCurrent === object1.parameters.attackFrame
+	) {
+		object1.isAttacking = false;
+		if (object2.parameters.hp > 0) {
+			object2.parameters.hp = object2.parameters.hp - object1.parameters.attackPower;
+		}
+		else {
+			object2.parameters.hp = 0
+		}
+		object2.switchSprites('takeHit');
+
+		object2.lifeBlock.style.width = object2.parameters.hp + '%';
+
+	}
+
+	if (object1.framesCurrent === object1.parameters.attackFrame) {
+		object1.isAttacking = false;
 	}
 }
 
@@ -278,7 +299,7 @@ window.addEventListener('keydown', function (event) {
 	}
 
 	if (player.keys.attack.includes(event.key)) {
-		player.attack();
+		player.attack1();
 	}
 
 	if (Object.keys(enemy.keys.moveX).includes(event.key)) {
@@ -292,7 +313,7 @@ window.addEventListener('keydown', function (event) {
 	}
 
 	if (enemy.keys.attack.includes(event.key)) {
-		enemy.attack()
+		enemy.attack1()
 	}
 });
 
