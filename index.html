@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="css/game.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+	<style>
+		* {
+			box-sizing: border-box;
+			font-family: 'Press Start 2P', cursive;
+		}
+	</style>
 	<title>Fighting game</title>
 </head>
+
 <body>
 	<div class="game-body">
 		<div class="game-body__header">
-			<div 
-			id="player-life" class="game-body__header__left">
-			<div class="hp"></div>
+			<div id="player-life" class="game-body__header__left">
+				<div class="hp"></div>
 			</div>
 			<div id="timer" class="game-body__header__center">
-				
+
 			</div>
-			<div 
-			id="enemy-life"
-			class="game-body__header__right">
-			<div class="hp"></div>
+			<div id="enemy-life" class="game-body__header__right">
+				<div class="hp"></div>
 
 			</div>
 		</div>
@@ -28,10 +36,16 @@
 		</div>
 		<canvas id="game"></canvas>
 	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
+		integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 	<script src="js/settings.js"></script>
 	<script src="js/utils.js"></script>
 	<script src="js/classes.js"></script>
 	<script src="index.js"></script>
-	
+
 </body>
+
 </html>

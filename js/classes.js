@@ -9,6 +9,7 @@ class Sprite {
 		this.framesElapced = 0;
 		this.framesHold = 3;
 		this.offset = offset;
+		this.dead = false;
 	}
 
 	draw() {
@@ -92,7 +93,17 @@ class Fighters extends Sprite {
 
 	switchSprites(spriteName) {
 
-		/// evrwridint all other animations with the attack animation
+		/// death
+		if(this.image === this.sprites.death.image){
+			if(
+				this.framesCurrent === this.sprites.death.framesMax - 1
+			){
+				this.dead = true;
+			}
+			return;
+		}
+
+		/// overwridint all other animations with the attack animation
 		if (
 			this.image === this.sprites.attack1.image &&
 			this.framesCurrent < this.sprites.attack1.framesMax - 1
@@ -116,7 +127,10 @@ class Fighters extends Sprite {
 
 	update() {
 		this.draw();
-		this.updateFrames();
+		if(!this.dead){
+			this.updateFrames();
+		}
+
 		this.position.x += this.velocity.x;
 		this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
 		this.attackBox.position.y = this.position.y + this.attackBox.offset.y;

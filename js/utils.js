@@ -11,6 +11,8 @@ function stopGame() {
 	} 
 	if(player.parameters.hp === enemy.parameters.hp){
 		notification = 'Tie';
+		player.switchSprites('death');
+		enemy.switchSprites('death');
 	}
 	if(player.parameters.hp > enemy.parameters.hp){
 		notification = 'Player win';

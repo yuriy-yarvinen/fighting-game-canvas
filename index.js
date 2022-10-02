@@ -80,6 +80,10 @@ const player = new Fighters({
 			framesMax: 4,
 			imageSrc: './images/samuraiMack/Take Hit - white silhouette.png'
 		},
+		death: {
+			framesMax: 6,
+			imageSrc: './images/samuraiMack/Death.png'
+		},
 	},
 	keys: {
 		moveX: {
@@ -162,6 +166,10 @@ const enemy = new Fighters({
 		takeHit: {
 			framesMax: 3,
 			imageSrc: './images/kenji/Take hit.png'
+		},
+		death: {
+			framesMax: 7,
+			imageSrc: './images/kenji/Death.png'
 		},
 	},
 	keys: {
@@ -267,15 +275,24 @@ function attackDetect(object1, object2) {
 		object1.framesCurrent === object1.parameters.attackFrame
 	) {
 		object1.isAttacking = false;
-		if (object2.parameters.hp > 0) {
-			object2.parameters.hp = object2.parameters.hp - object1.parameters.attackPower;
-		}
-		else {
-			object2.parameters.hp = 0
-		}
-		object2.switchSprites('takeHit');
+		object2.parameters.hp = object2.parameters.hp - object1.parameters.attackPower;		
+		
+		gsap.to(object2.lifeBlock, {
+			width: object2.parameters.hp + '%'
+		});
 
-		object2.lifeBlock.style.width = object2.parameters.hp + '%';
+		if (object2.parameters.hp <= 0) {
+			object2.parameters.hp = 0;
+		}
+
+		if(!object1.dead){
+			if (object2.parameters.hp > 0) {
+				object2.switchSprites('takeHit');
+			} else {
+				object2.switchSprites('death');
+			}
+		}
+
 
 	}
 
@@ -286,34 +303,38 @@ function attackDetect(object1, object2) {
 
 // key binding
 window.addEventListener('keydown', function (event) {
-	if (Object.keys(player.keys.moveX).includes(event.key)) {
-		player.keys.moveX[event.key].pressed = true;
-		player.lastKey = event.key;
-	}
+	if (!player.dead) {
+		if (Object.keys(player.keys.moveX).includes(event.key)) {
+			player.keys.moveX[event.key].pressed = true;
+			player.lastKey = event.key;
+		}
 
-	if (event.key == 'w') {
-		if (player.position.y + player.parameters.height >= canvas.height - player.parameters.stopFall) {
-			player.velocity.y = player.parameters.jumpHeight;
+		if (event.key == 'w') {
+			if (player.position.y + player.parameters.height >= canvas.height - player.parameters.stopFall) {
+				player.velocity.y = player.parameters.jumpHeight;
 
+			}
+		}
+
+		if (player.keys.attack.includes(event.key)) {
+			player.attack1();
 		}
 	}
 
-	if (player.keys.attack.includes(event.key)) {
-		player.attack1();
-	}
-
-	if (Object.keys(enemy.keys.moveX).includes(event.key)) {
-		enemy.keys.moveX[event.key].pressed = true;
-		enemy.lastKey = event.key;
-	}
-	if (event.key == 'ArrowUp') {
-		if (enemy.position.y + enemy.parameters.height >= canvas.height - enemy.parameters.stopFall) {
-			enemy.velocity.y = enemy.parameters.jumpHeight;
+	if (!enemy.dead) {
+		if (Object.keys(enemy.keys.moveX).includes(event.key)) {
+			enemy.keys.moveX[event.key].pressed = true;
+			enemy.lastKey = event.key;
 		}
-	}
+		if (event.key == 'ArrowUp') {
+			if (enemy.position.y + enemy.parameters.height >= canvas.height - enemy.parameters.stopFall) {
+				enemy.velocity.y = enemy.parameters.jumpHeight;
+			}
+		}
 
-	if (enemy.keys.attack.includes(event.key)) {
-		enemy.attack1()
+		if (enemy.keys.attack.includes(event.key)) {
+			enemy.attack1()
+		}
 	}
 });
 
@@ -344,4 +365,3 @@ var gameInterval = setInterval(() => {
 	}
 
 }, 1000);
-console.log(player);

@@ -1,12 +1,13 @@
-html{
+html {
 	box-sizing: border-box;
 }
 
-.game-body{
+.game-body {
 	display: inline-block;
 	position: relative;
 }
-.game-body__header{
+
+.game-body__header {
 	display: flex;
 	justify-content: space-between;
 	height: 80px;
@@ -14,7 +15,8 @@ html{
 	width: 100%;
 	position: absolute;
 }
-#notification{
+
+#notification {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -26,28 +28,37 @@ html{
 	font-size: 25px;
 	color: #ffffff;
 }
-.game-body__header__left,.game-body__header__right{
-		border: 1px solid #ffffff;
-		height: 70px;
-		width: 45%;
-		background-color: red;
-		position: relative;
-}
-.game-body__header__left .hp,.game-body__header__right .hp{
-		content: '';
-		background-color: blue;
-		width: 100%;
-		position: absolute;
-		height: inherit;
-		right: 0;
-		
+
+.game-body__header__left,
+.game-body__header__right {
+	border: 1px solid #ffffff;
+	height: 70px;
+	width: 45%;
+	background-color: red;
+	position: relative;
 }
 
-.game-body__header__left{
-		
+.game-body__header__left .hp,
+.game-body__header__right .hp {
+	content: '';
+	background-color: #60A5FA;
+	width: 100%;
+	position: absolute;
+	height: 68px;
+
 }
 
-.game-body__header__center{
+.game-body__header__right .hp {
+	left: 0;
+}
+
+.game-body__header__left .hp {
+	right: 0;
+}
+
+.game-body__header__left {}
+
+.game-body__header__center {
 	width: 10%;
 	display: flex;
 	justify-content: center;
